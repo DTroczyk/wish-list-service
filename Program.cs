@@ -1,8 +1,13 @@
-var builder = WebApplication.CreateBuilder(args);
+using Microsoft.EntityFrameworkCore;
+using WishListApi.Models;
 
+var builder = WebApplication.CreateBuilder(args);
+var connectionString = Environment.GetEnvironmentVariable("dbConnectionString");
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Configuration.AddEnvironmentVariables();
+builder.Services.AddDbContext<AppDbContext>(opt => { opt.UseSqlServer(connectionString); });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
