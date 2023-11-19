@@ -18,5 +18,7 @@ namespace WishListApi.Models
         public string? FirstName { get; set; }
         [Required]
         public string? LastName { get; set; }
+        public IList<Wish> Wishes { get; } = new List<Wish>();
+        public IList<WishUser> AssignedTo { get; } = new List<WishUser>();
     }
 }
