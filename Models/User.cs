@@ -20,5 +20,7 @@ namespace WishListApi.Models
         public string? LastName { get; set; }
         public IList<Wish> Wishes { get; } = new List<Wish>();
         public IList<WishUser> AssignedTo { get; } = new List<WishUser>();
+        public bool IsActive { get; set; }
+        public DateTime RegisterDate { get; set; }
     }
 }

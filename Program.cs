@@ -2,7 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using WishListApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = Environment.GetEnvironmentVariable("dbConnectionString");
+// var connectionString = Environment.GetEnvironmentVariable("dbConnectionString");
+var connectionString = Environment.GetEnvironmentVariable("testDbConnectionString");
 // Add services to the container.
 
 builder.Services.AddControllers();
