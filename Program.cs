@@ -15,6 +15,10 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<ILoginService, LoginService>();
 
+builder.Services.AddCors(options => options.AddPolicy("Allow all", policy => {
+    policy.AllowAnyOrigin();
+}));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -25,6 +29,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors();
 
 app.UseAuthorization();
 

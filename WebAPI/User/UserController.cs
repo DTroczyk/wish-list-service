@@ -31,8 +31,12 @@ namespace wish_list_service.WebAPI.User
         {
             try
             {
-                Register(registerDto);
-                return NoContent();
+                if(_loginService.UserExist(registerDto.Login)) {
+                    return Conflict("User already exists.");
+                }
+
+                var newUser = _loginService.Register(registerDto);
+                return Created("https://google.com",newUser);
             }
             catch (Exception Error)
             {

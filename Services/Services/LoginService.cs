@@ -11,28 +11,49 @@ namespace WishListApi.Services
     public class LoginService : BaseService, ILoginService
     {
         private readonly PasswordHasher<User> _PasswordHasher = new PasswordHasher<User>();
-        private readonly User _TestUser = new User();
 
         public LoginService(AppDbContext dbContext) : base(dbContext)
         {
         }
 
-        public string Register(RegisterDto registerDto)
-        {
-
-            throw new NotImplementedException();
+        public bool UserExist(string login) {
+            var isUserExist = _dbContext.User.FirstOrDefault(u => u.Login == login);
+            return isUserExist != null;
         }
 
-        public string HashPassword(string password)
-        {
-            var hashed =_PasswordHasher.HashPassword(_TestUser, password);
-            return hashed;
+        private IList<string> ValidateRegisterFields(RegisterDto registerDto) {
+            var errors = new List<string>();
+            return errors;
         }
 
-        public PasswordVerificationResult VerifyPassword(string hashedPassword, string password)
+        public User Register(RegisterDto registerDto)
         {
-            var isVerified = _PasswordHasher.VerifyHashedPassword(_TestUser,hashedPassword,password);
-            return isVerified;
+            IList<string> errors = ValidateRegisterFields(registerDto);
+
+            if (errors.Count > 0) {
+                throw new Exception("Fields are incorrect.");
+            }
+
+            User newUser = new User();
+                newUser.FirstName = registerDto.FirstName;
+            newUser.LastName = registerDto.LastName;
+            newUser.Email = registerDto.Email;
+            newUser.Login = registerDto.Login;
+            newUser.Password = _PasswordHasher.HashPassword(newUser,registerDto.Password);
+            newUser.IsActive = false;
+            newUser.RegisterDate = DateTime.UtcNow;
+            Console.WriteLine(newUser.Login);
+
+            _dbContext.User.Add(newUser);
+            _dbContext.SaveChanges();
+            var addedUser = _dbContext.User.FirstOrDefault(u => u.Login == registerDto.Login);
+           
+           if (addedUser != null) {
+            return addedUser;
+           }
+           else {
+            throw new Exception("Object cannot be get.");
+           }
         }
     }
 }
