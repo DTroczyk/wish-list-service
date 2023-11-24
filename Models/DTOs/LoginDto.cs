@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace wish_list_service.WebAPI.User
+namespace wish_list_service.Models.DTOs
 {
     public class LoginDto
     {

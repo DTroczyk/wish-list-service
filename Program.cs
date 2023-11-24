@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using WishListApi.Models;
+using WishListApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 // var connectionString = Environment.GetEnvironmentVariable("dbConnectionString");
@@ -11,6 +12,8 @@ builder.Services.AddDbContext<AppDbContext>(opt => { opt.UseSqlServer(connection
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<ILoginService, LoginService>();
 
 var app = builder.Build();
 
