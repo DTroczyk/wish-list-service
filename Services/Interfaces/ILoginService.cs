@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using wish_list_service.Models.DTOs;
 using WishListApi.Models;
 using WishListApi.Models.DTOs;
 
@@ -8,5 +9,6 @@ namespace WishListApi.Services
     {
         public User Register(RegisterDto registerDto);
         public bool UserExist(string login);
+        public User Login(LoginDto loginDto);
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 using WishListApi.Models;
 using WishListApi.Models.DTOs;
+using wish_list_service.Models.DTOs;
 
 namespace WishListApi.Services
 {
@@ -46,7 +47,7 @@ namespace WishListApi.Services
 
             _dbContext.User.Add(newUser);
             _dbContext.SaveChanges();
-            var addedUser = _dbContext.User.FirstOrDefault(u => u.Login == registerDto.Login);
+            var addedUser = _dbContext.User.Find(registerDto.Login);
            
            if (addedUser != null) {
             return addedUser;
@@ -54,6 +55,21 @@ namespace WishListApi.Services
            else {
             throw new Exception("Object cannot be get.");
            }
+        }
+
+        public User Login(LoginDto loginDto)
+        {
+            var user = _dbContext.User.Find(loginDto.Login) ?? throw new Exception("User not exist.");
+
+            PasswordVerificationResult loginResult = _PasswordHasher.VerifyHashedPassword(user, user.Password, loginDto.Password);
+
+            if (loginResult == PasswordVerificationResult.Success) {
+            return user;
+            // } else if (loginResult == PasswordVerificationResult.SuccessRehashNeeded) {
+            } else{
+                throw new Exception("Wrong username or password.");
+            }
+
         }
     }
 }

@@ -7,7 +7,7 @@ namespace wish_list_service.Models.DTOs
 {
     public class LoginDto
     {
-        public string? UserName { get; set; }
-        public string? Password { get; set; }
+        public string Login { get; set; }
+        public string Password { get; set; }
     }
 }

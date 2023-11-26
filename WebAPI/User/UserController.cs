@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using wish_list_service.Models.DTOs;
 using WishListApi.Models.DTOs;
@@ -23,7 +24,17 @@ namespace wish_list_service.WebAPI.User
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginDto login)
         {
-            return Ok(new { login = login.UserName, property1 = login.Password });
+            try {
+                Console.WriteLine(login);
+                var user = _loginService.Login(login);
+                if (user == null) {
+                    return BadRequest("Wrong data");
+                } else {
+                    return Ok(user);
+                }
+            } catch (Exception Error) {
+                return Unauthorized(Error.Message);
+            }
         }
 
         [HttpPost("register")]
