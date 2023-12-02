@@ -38,21 +38,20 @@ namespace wish_list_service.WebAPI.User
         }
 
         [HttpPost("register")]
+        [ProducesResponseType(201)]
         public IActionResult Register([FromBody] RegisterDto registerDto)
         {
-            try
-            {
-                if(_loginService.UserExist(registerDto.Login)) {
-                    return Conflict("User already exists.");
-                }
+            if(_loginService.UserExist(registerDto.Login)) {
+                return Conflict("User already exists.");
+            }
 
-                var newUser = _loginService.Register(registerDto);
-                return Created("https://google.com",newUser);
+            var errors = _loginService.ValidateRegisterFields(registerDto);
+            if (errors.Count > 0) {
+                return BadRequest(new {message = "Fields are incorrect.", errors});
             }
-            catch (Exception Error)
-            {
-                return BadRequest(Error);
-            }
+
+            var newUser = _loginService.Register(registerDto);
+            return Created("", newUser);
         }
 
        
