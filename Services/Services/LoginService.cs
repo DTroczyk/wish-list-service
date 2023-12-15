@@ -26,8 +26,7 @@ namespace WishListApi.Services
         public List<ErrorModel> ValidateRegisterFields(RegisterDto registerDto) {
             List<ErrorModel> errors = new List<ErrorModel>();
 
-            // Regex isn't workings
-            Regex loginRegex = new Regex(@"^[a-z0-9](?:[a-z0-9]|[-_](?=[a-z0-9])){0,50}$/i");
+            Regex loginRegex = new Regex(@"^[A-z0-9](?:[A-z0-9]|[-_](?=[A-z0-9])){0,50}$");
             if (registerDto.Login.Length < 3) {
                 errors.Add(new ErrorModel() {FieldName = "Login", Message = "Login must be longer than 3 characters.", Code = "LoginTooShort"});
             }
