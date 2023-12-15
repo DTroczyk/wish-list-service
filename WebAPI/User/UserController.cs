@@ -45,6 +45,10 @@ namespace wish_list_service.WebAPI.User
                 return Conflict("User already exists.");
             }
 
+            if(_loginService.EmailExist(registerDto.Email)) {
+                return Conflict("Email already exists.");
+            }
+
             var errors = _loginService.ValidateRegisterFields(registerDto);
             if (errors.Count > 0) {
                 return BadRequest(new {message = "Fields are incorrect.", errors});

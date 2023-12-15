@@ -10,6 +10,7 @@ namespace WishListApi.Services
         public User Register(RegisterDto registerDto);
         public List<ErrorModel> ValidateRegisterFields(RegisterDto registerDto);
         public bool UserExist(string login);
+        public bool EmailExist(string email);
         public User Login(LoginDto loginDto);
     }
 }

@@ -23,6 +23,11 @@ namespace WishListApi.Services
             return isUserExist != null;
         }
 
+        public bool EmailExist(string email) {
+            User? isEmailExist = _dbContext.User.First<User>(u => u.Email.ToLower().Equals(email.ToLower()));
+            return isEmailExist != null;
+        }
+
         public List<ErrorModel> ValidateRegisterFields(RegisterDto registerDto) {
             List<ErrorModel> errors = new List<ErrorModel>();
 
