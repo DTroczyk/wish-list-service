@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using wish_list_service.Models.DTOs;
+using WishListApi.Models;
 using WishListApi.Models.DTOs;
 using WishListApi.Services;
 
@@ -28,12 +23,17 @@ namespace wish_list_service.WebAPI.User
                 Console.WriteLine(login);
                 var user = _loginService.Login(login);
                 if (user == null) {
-                    return BadRequest("Wrong data");
-                } else {
-                    return Ok(user);
+                    return BadRequest(new ErrorModel(){Message = "Wrong data", Code = "WrongData"});
+                } 
+
+                if (!_loginService.IsUserActive(login.Login)) {
+                    return StatusCode(403, new ErrorModel(){Message = "Account is inactive", Code = "InactiveAccount"});
                 }
+
+                return Ok(user);
             } catch (Exception Error) {
-                return Unauthorized(Error.Message);
+                Console.WriteLine(Error);
+                return StatusCode(500, new ErrorModel(){Message = "Internal server error", Code = "ServerError"});
             }
         }
 
@@ -41,21 +41,26 @@ namespace wish_list_service.WebAPI.User
         [ProducesResponseType(201)]
         public IActionResult Register([FromBody] RegisterDto registerDto)
         {
-            if(_loginService.UserExist(registerDto.Login)) {
-                return Conflict("User already exists.");
-            }
+            try {
+                if(_loginService.IsUserExist(registerDto.Login)) {
+                    return Conflict(new ErrorModel(){Message = "User already exists.", Code = "UserExists"});
+                }
 
-            if(_loginService.EmailExist(registerDto.Email)) {
-                return Conflict("Email already exists.");
-            }
+                if(_loginService.IsEmailExist(registerDto.Email)) {
+                    return Conflict(new ErrorModel(){Message = "Email already exists.", Code = "EmailExists"});
+                }
 
-            var errors = _loginService.ValidateRegisterFields(registerDto);
-            if (errors.Count > 0) {
-                return BadRequest(new {message = "Fields are incorrect.", errors});
-            }
+                var errors = _loginService.ValidateRegisterFields(registerDto);
+                if (errors.Count > 0) {
+                    return BadRequest(errors);
+                }
 
-            var newUser = _loginService.Register(registerDto);
-            return Created("", newUser);
+                var newUser = _loginService.Register(registerDto);
+                return Created("", newUser);
+            } catch (Exception Error) {
+                Console.WriteLine(Error);
+                return StatusCode(500, new ErrorModel(){Message = "Internal server error", Code = "ServerError"});
+            }
         }
 
        
