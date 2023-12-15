@@ -7,10 +7,11 @@ namespace WishListApi.Services
 {
     public interface ILoginService
     {
-        public User Register(RegisterDto registerDto);
+        public UserVm Register(RegisterDto registerDto);
         public List<ErrorModel> ValidateRegisterFields(RegisterDto registerDto);
-        public bool UserExist(string login);
-        public bool EmailExist(string email);
-        public User Login(LoginDto loginDto);
+        public bool IsUserExist(string login);
+        public bool IsEmailExist(string email);
+        public bool IsUserActive(string login);
+        public UserVm Login(LoginDto loginDto);
     }
 }

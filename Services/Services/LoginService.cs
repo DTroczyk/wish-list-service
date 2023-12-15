@@ -7,6 +7,7 @@ using WishListApi.Models;
 using WishListApi.Models.DTOs;
 using wish_list_service.Models.DTOs;
 using System.Text.RegularExpressions;
+using AutoMapper;
 
 namespace WishListApi.Services
 {
@@ -14,17 +15,17 @@ namespace WishListApi.Services
     {
         private readonly PasswordHasher<User> _PasswordHasher = new PasswordHasher<User>();
 
-        public LoginService(AppDbContext dbContext) : base(dbContext)
+        public LoginService(AppDbContext dbContext, IMapper mapper) : base(dbContext, mapper)
         {
         }
 
-        public bool UserExist(string login) {
+        public bool IsUserExist(string login) {
             User? isUserExist = _dbContext.User.Find(login);
             return isUserExist != null;
         }
 
-        public bool EmailExist(string email) {
-            User? isEmailExist = _dbContext.User.First<User>(u => u.Email.ToLower().Equals(email.ToLower()));
+        public bool IsEmailExist(string email) {
+            User? isEmailExist = _dbContext.User.First(u => u.Email.ToLower().Equals(email.ToLower()));
             return isEmailExist != null;
         }
 
@@ -79,7 +80,7 @@ namespace WishListApi.Services
             return errors;
         }
 
-        public User Register(RegisterDto registerDto)
+        public UserVm Register(RegisterDto registerDto)
         {
             User newUser = new User();
 
@@ -97,24 +98,37 @@ namespace WishListApi.Services
             User? addedUser = _dbContext.User.Find(registerDto.Login);
            
            if (addedUser != null) {
-            return addedUser;
+            return _mapper.Map<UserVm>(addedUser);
            }
            else {
             throw new Exception("Object cannot be get.");
            }
         }
 
-        public User Login(LoginDto loginDto)
+        public bool IsUserActive(string login) {
+            User? user = _dbContext.User.Find(login);
+            if (user != null) {
+                return user.IsActive;
+            }
+            return false;
+        }
+
+        public UserVm Login(LoginDto loginDto)
         {
-            var user = _dbContext.User.Find(loginDto.Login) ?? throw new Exception("User not exist.");
+            var user = _dbContext.User.Find(loginDto.Login);
+
+            if (user == null) {
+                return null;
+            }
 
             PasswordVerificationResult loginResult = _PasswordHasher.VerifyHashedPassword(user, user.Password, loginDto.Password);
 
             if (loginResult == PasswordVerificationResult.Success) {
-            return user;
+                return _mapper.Map<UserVm>(user);
+
             // } else if (loginResult == PasswordVerificationResult.SuccessRehashNeeded) {
             } else{
-                throw new Exception("Wrong username or password.");
+                return null;
             }
 
         }
