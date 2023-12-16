@@ -15,6 +15,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<ILoginService, LoginService>();
+builder.Services.AddScoped<IWishService, WishService>();
 
 builder.Services.AddCors(options => options.AddPolicy("Allow all", policy => {
     policy.AllowAnyOrigin();
