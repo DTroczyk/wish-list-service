@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.Identity;
-using System.Threading.Tasks;
 using WishListApi.Models;
 using WishListApi.Models.DTOs;
 using wish_list_service.Models.DTOs;
@@ -20,12 +16,12 @@ namespace WishListApi.Services
         }
 
         public bool IsUserExist(string login) {
-            User? isUserExist = _dbContext.User.Find(login);
+            User? isUserExist = _dbContext.User.FirstOrDefault(u => u.Login.ToLower().Equals(login.ToLower()));
             return isUserExist != null;
         }
 
         public bool IsEmailExist(string email) {
-            User? isEmailExist = _dbContext.User.First(u => u.Email.ToLower().Equals(email.ToLower()));
+            User? isEmailExist = _dbContext.User.FirstOrDefault(u => u.Email.ToLower().Equals(email.ToLower()));
             return isEmailExist != null;
         }
 

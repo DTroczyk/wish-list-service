@@ -17,13 +17,16 @@ namespace wish_list_service.WebAPI.User
         }
 
         [HttpPost("login")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(500)]
         public IActionResult Login([FromBody] LoginDto login)
         {
             try {
-                Console.WriteLine(login);
                 var user = _loginService.Login(login);
                 if (user == null) {
-                    return BadRequest(new ErrorModel(){Message = "Wrong data", Code = "WrongData"});
+                    return Unauthorized(new ErrorModel(){Message = "Wrong login or password", Code = "WrongLoginData"});
                 } 
 
                 if (!_loginService.IsUserActive(login.Login)) {
@@ -39,6 +42,9 @@ namespace wish_list_service.WebAPI.User
 
         [HttpPost("register")]
         [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(409)]
+        [ProducesResponseType(500)]
         public IActionResult Register([FromBody] RegisterDto registerDto)
         {
             try {
