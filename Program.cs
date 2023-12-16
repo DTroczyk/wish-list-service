@@ -3,10 +3,11 @@ using WishListApi.Models;
 using WishListApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-// var connectionString = Environment.GetEnvironmentVariable("dbConnectionString");
-var connectionString = Environment.GetEnvironmentVariable("testDbConnectionString");
+var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+var connectionString = configuration.GetValue<string>("ConnectionStrings:Default");
 // Add services to the container.
 
+builder.Services.AddAuthentication().AddJwtBearer();
 builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddDbContext<AppDbContext>(opt => { opt.UseSqlServer(connectionString); });
