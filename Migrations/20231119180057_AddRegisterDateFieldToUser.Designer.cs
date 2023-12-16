@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WishListApi.Models;
 
@@ -11,9 +12,11 @@ using WishListApi.Models;
 namespace WishListApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231119180057_AddRegisterDateFieldToUser")]
+    partial class AddRegisterDateFieldToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -61,7 +64,7 @@ namespace WishListApi.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -82,8 +85,6 @@ namespace WishListApi.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Login");
-
-                    b.HasIndex("Email");
 
                     b.ToTable("User");
                 });

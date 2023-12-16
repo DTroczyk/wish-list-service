@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 namespace WishListApi.Models
@@ -18,6 +14,7 @@ namespace WishListApi.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().HasMany(e => e.Wishes).WithOne(e => e.User).HasForeignKey(e => e.UserId).IsRequired();
+            modelBuilder.Entity<User>().HasIndex(e => e.Email);
 
             modelBuilder.Entity<WishUser>().HasKey(e => new { e.AssignedWishId, e.AssignedUserLogin });
 

@@ -1,7 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using wish_list_service.Models.DTOs;
+using WishListApi.Models;
+using WishListApi.Models.DTOs;
+using WishListApi.Services;
 
 namespace wish_list_service.WebAPI.User
 {
@@ -9,16 +10,65 @@ namespace wish_list_service.WebAPI.User
     [Route("api/user")]
     public class UserController : ControllerBase
     {
-        [HttpGet("hello-world")]
-        public IActionResult Get()
-        {
-            return Ok(new { Message = "Hello world" });
+        private readonly ILoginService _loginService;
+
+        public UserController(ILoginService loginService) {
+            _loginService = loginService;
         }
 
-        [HttpPost]
+        [HttpPost("login")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(500)]
         public IActionResult Login([FromBody] LoginDto login)
         {
-            return Ok(new { login = login.UserName, property1 = login.Password });
+            try {
+                var user = _loginService.Login(login);
+                if (user == null) {
+                    return Unauthorized(new ErrorModel(){Message = "Wrong login or password", Code = "WrongLoginData"});
+                } 
+
+                if (!_loginService.IsUserActive(login.Login)) {
+                    return StatusCode(403, new ErrorModel(){Message = "Account is inactive", Code = "InactiveAccount"});
+                }
+
+                return Ok(user);
+            } catch (Exception Error) {
+                Console.WriteLine(Error);
+                return StatusCode(500, new ErrorModel(){Message = "Internal server error", Code = "ServerError"});
+            }
         }
+
+        [HttpPost("register")]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(409)]
+        [ProducesResponseType(500)]
+        public IActionResult Register([FromBody] RegisterDto registerDto)
+        {
+            try {
+                if(_loginService.IsUserExist(registerDto.Login)) {
+                    return Conflict(new ErrorModel(){Message = "User already exists.", Code = "UserExists"});
+                }
+
+                if(_loginService.IsEmailExist(registerDto.Email)) {
+                    return Conflict(new ErrorModel(){Message = "Email already exists.", Code = "EmailExists"});
+                }
+
+                var errors = _loginService.ValidateRegisterFields(registerDto);
+                if (errors.Count > 0) {
+                    return BadRequest(errors);
+                }
+
+                var newUser = _loginService.Register(registerDto);
+                return Created("", newUser);
+            } catch (Exception Error) {
+                Console.WriteLine(Error);
+                return StatusCode(500, new ErrorModel(){Message = "Internal server error", Code = "ServerError"});
+            }
+        }
+
+       
     }
 }
