@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using wish_list_service.Models.DTOs;
 using WishListApi.Models;
@@ -24,8 +25,8 @@ namespace wish_list_service.WebAPI.User
         public IActionResult Login([FromBody] LoginDto login)
         {
             try {
-                var user = _loginService.Login(login);
-                if (user == null) {
+                var token = _loginService.Login(login);
+                if (token == null) {
                     return Unauthorized(new ErrorModel(){Message = "Wrong login or password", Code = "WrongLoginData"});
                 } 
 
@@ -33,13 +34,13 @@ namespace wish_list_service.WebAPI.User
                     return StatusCode(403, new ErrorModel(){Message = "Account is inactive", Code = "InactiveAccount"});
                 }
 
-                return Ok(user);
+                return Ok(token);
             } catch (Exception Error) {
                 Console.WriteLine(Error);
                 return StatusCode(500, new ErrorModel(){Message = "Internal server error", Code = "ServerError"});
             }
         }
-
+        
         [HttpPost("register")]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
@@ -61,8 +62,8 @@ namespace wish_list_service.WebAPI.User
                     return BadRequest(errors);
                 }
 
-                var newUser = _loginService.Register(registerDto);
-                return Created("", newUser);
+                var token = _loginService.Register(registerDto);
+                return Created("", token);
             } catch (Exception Error) {
                 Console.WriteLine(Error);
                 return StatusCode(500, new ErrorModel(){Message = "Internal server error", Code = "ServerError"});

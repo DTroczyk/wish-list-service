@@ -4,6 +4,11 @@ using WishListApi.Models.DTOs;
 using wish_list_service.Models.DTOs;
 using System.Text.RegularExpressions;
 using AutoMapper;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using WishListApi.Configuration;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace WishListApi.Services
 {
@@ -13,6 +18,23 @@ namespace WishListApi.Services
 
         public LoginService(AppDbContext dbContext, IMapper mapper) : base(dbContext, mapper)
         {
+        }
+
+        private string GenerateToken(User user) {
+            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(WishListApi.Configuration.ConfigurationManager.AppSetting["JWT:Secret"]));
+            var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+            var tokenOptions = new JwtSecurityToken(
+                issuer: WishListApi.Configuration.ConfigurationManager.AppSetting["JWT:ValidIssuer"], 
+                audience: WishListApi.Configuration.ConfigurationManager.AppSetting["JWT:ValidAudience"], 
+                claims: new List<Claim>() {
+                    new Claim(JwtRegisteredClaimNames.Sub, user.Login),
+                    new Claim("firstName", user.FirstName),
+                    new Claim("lastName", user.LastName),
+                }, 
+                expires: DateTime.Now.AddMinutes(6), 
+                signingCredentials: signinCredentials);
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+            return tokenString;
         }
 
         public bool IsUserExist(string login) {
@@ -76,7 +98,7 @@ namespace WishListApi.Services
             return errors;
         }
 
-        public UserVm Register(RegisterDto registerDto)
+        public string Register(RegisterDto registerDto)
         {
             User newUser = new User();
 
@@ -93,12 +115,12 @@ namespace WishListApi.Services
             _dbContext.SaveChanges();
             User? addedUser = _dbContext.User.Find(registerDto.Login);
            
-           if (addedUser != null) {
-            return _mapper.Map<UserVm>(addedUser);
-           }
-           else {
-            throw new Exception("Object cannot be get.");
-           }
+            if (addedUser != null) {
+                return GenerateToken(addedUser);
+            }
+            else {
+                throw new Exception("Object cannot be get.");
+            }
         }
 
         public bool IsUserActive(string login) {
@@ -109,7 +131,7 @@ namespace WishListApi.Services
             return false;
         }
 
-        public UserVm Login(LoginDto loginDto)
+        public string Login(LoginDto loginDto)
         {
             var user = _dbContext.User.Find(loginDto.Login);
 
@@ -120,8 +142,7 @@ namespace WishListApi.Services
             PasswordVerificationResult loginResult = _PasswordHasher.VerifyHashedPassword(user, user.Password, loginDto.Password);
 
             if (loginResult == PasswordVerificationResult.Success) {
-                return _mapper.Map<UserVm>(user);
-
+                return GenerateToken(user);
             // } else if (loginResult == PasswordVerificationResult.SuccessRehashNeeded) {
             } else{
                 return null;
