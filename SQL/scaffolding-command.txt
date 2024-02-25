@@ -1,0 +1,1 @@
+dotnet ef dbcontext scaffold "Name=ConnectionStrings:Default" Microsoft.EntityFrameworkCore.SqlServer --output-dir Context --table User --table Friend
