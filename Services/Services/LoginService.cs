@@ -20,18 +20,18 @@ namespace WishListApi.Services
         }
 
         private string GenerateToken(User user) {
-            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(WishListApi.Configuration.ConfigurationManager.AppSetting["JWT:Secret"]));
-            var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.ConfigurationManager.AppSetting["JWT:Secret"]));
+            var signingCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
             var tokenOptions = new JwtSecurityToken(
-                issuer: WishListApi.Configuration.ConfigurationManager.AppSetting["JWT:ValidIssuer"], 
-                audience: WishListApi.Configuration.ConfigurationManager.AppSetting["JWT:ValidAudience"], 
+                issuer: Configuration.ConfigurationManager.AppSetting["JWT:ValidIssuer"], 
+                audience: Configuration.ConfigurationManager.AppSetting["JWT:ValidAudience"], 
                 claims: new List<Claim>() {
                     new Claim(JwtRegisteredClaimNames.Sub, user.Login),
                     new Claim("firstName", user.FirstName),
                     new Claim("lastName", user.LastName),
                 }, 
                 expires: DateTime.Now.AddMinutes(10), 
-                signingCredentials: signinCredentials);
+                signingCredentials: signingCredentials);
             var tokenString = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
             return tokenString;
         }
@@ -99,15 +99,16 @@ namespace WishListApi.Services
 
         public string Register(RegisterDto registerDto)
         {
-            User newUser = new User();
-
-            newUser.FirstName = registerDto.FirstName;
-            newUser.LastName = registerDto.LastName;
-            newUser.Email = registerDto.Email;
-            newUser.Login = registerDto.Login;
+            User newUser = new()
+            {
+                FirstName = registerDto.FirstName,
+                LastName = registerDto.LastName,
+                Email = registerDto.Email,
+                Login = registerDto.Login,
+                IsActive = false,
+                RegisterDate = DateTime.UtcNow
+            };
             newUser.Password = _PasswordHasher.HashPassword(newUser,registerDto.Password);
-            newUser.IsActive = false;
-            newUser.RegisterDate = DateTime.UtcNow;
 
             _dbContext.Users.Add(newUser);
             _dbContext.SaveChanges();
