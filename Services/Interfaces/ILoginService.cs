@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Identity;
-using wish_list_service.Models.DTOs;
+using WishListApi.Models.DTOs;
 using WishListApi.Models;
 using WishListApi.Models.DTOs;
 

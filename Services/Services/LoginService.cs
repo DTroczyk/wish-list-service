@@ -1,14 +1,13 @@
 using Microsoft.AspNetCore.Identity;
 using WishListApi.Models;
 using WishListApi.Models.DTOs;
-using wish_list_service.Models.DTOs;
 using System.Text.RegularExpressions;
 using AutoMapper;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using WishListApi.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using WishListApi.Context;
 
 namespace WishListApi.Services
 {
@@ -31,19 +30,19 @@ namespace WishListApi.Services
                     new Claim("firstName", user.FirstName),
                     new Claim("lastName", user.LastName),
                 }, 
-                expires: DateTime.Now.AddMinutes(6), 
+                expires: DateTime.Now.AddMinutes(10), 
                 signingCredentials: signinCredentials);
             var tokenString = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
             return tokenString;
         }
 
         public bool IsUserExist(string login) {
-            User? isUserExist = _dbContext.User.FirstOrDefault(u => u.Login.ToLower().Equals(login.ToLower()));
+            User? isUserExist = _dbContext.Users.FirstOrDefault(u => u.Login.ToLower().Equals(login.ToLower()));
             return isUserExist != null;
         }
 
         public bool IsEmailExist(string email) {
-            User? isEmailExist = _dbContext.User.FirstOrDefault(u => u.Email.ToLower().Equals(email.ToLower()));
+            User? isEmailExist = _dbContext.Users.FirstOrDefault(u => u.Email.ToLower().Equals(email.ToLower()));
             return isEmailExist != null;
         }
 
@@ -109,22 +108,16 @@ namespace WishListApi.Services
             newUser.Password = _PasswordHasher.HashPassword(newUser,registerDto.Password);
             newUser.IsActive = false;
             newUser.RegisterDate = DateTime.UtcNow;
-            Console.WriteLine(newUser.Login);
 
-            _dbContext.User.Add(newUser);
+            _dbContext.Users.Add(newUser);
             _dbContext.SaveChanges();
-            User? addedUser = _dbContext.User.Find(registerDto.Login);
+            _dbContext.Users.Find(registerDto.Login);
            
-            if (addedUser != null) {
-                return GenerateToken(addedUser);
-            }
-            else {
-                throw new Exception("Object cannot be get.");
-            }
+            return GenerateToken(newUser);
         }
 
         public bool IsUserActive(string login) {
-            User? user = _dbContext.User.Find(login);
+            User? user = _dbContext.Users.FirstOrDefault(u => u.Login == login);
             if (user != null) {
                 return user.IsActive;
             }
@@ -133,7 +126,7 @@ namespace WishListApi.Services
 
         public string Login(LoginDto loginDto)
         {
-            var user = _dbContext.User.Find(loginDto.Login);
+            var user = _dbContext.Users.FirstOrDefault(u => u.Login == loginDto.Login);
 
             if (user == null) {
                 return null;

@@ -1,5 +1,5 @@
 using AutoMapper;
-using WishListApi.Models;
+using WishListApi.Context;
 
 namespace WishListApi.Services
 {

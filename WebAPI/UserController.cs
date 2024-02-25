@@ -1,11 +1,9 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using wish_list_service.Models.DTOs;
-using WishListApi.Models;
 using WishListApi.Models.DTOs;
+using WishListApi.Models;
 using WishListApi.Services;
 
-namespace wish_list_service.WebAPI.User
+namespace WishListApi.WebAPI.User
 {
     [ApiController]
     [Route("api/user")]
@@ -18,10 +16,10 @@ namespace wish_list_service.WebAPI.User
         }
 
         [HttpPost("login")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(403)]
-        [ProducesResponseType(500)]
+        [ProducesResponseType(typeof(string), 200)]
+        [ProducesResponseType(typeof(ErrorModel), 400)]
+        [ProducesResponseType(typeof(ErrorModel), 403)]
+        [ProducesResponseType(typeof(ErrorModel), 500)]
         public IActionResult Login([FromBody] LoginDto login)
         {
             try {
@@ -42,10 +40,10 @@ namespace wish_list_service.WebAPI.User
         }
         
         [HttpPost("register")]
-        [ProducesResponseType(201)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(409)]
-        [ProducesResponseType(500)]
+        [ProducesResponseType(typeof(string), 201)]
+        [ProducesResponseType(typeof(ErrorModel), 400)]
+        [ProducesResponseType(typeof(ErrorModel), 409)]
+        [ProducesResponseType(typeof(ErrorModel), 500)]
         public IActionResult Register([FromBody] RegisterDto registerDto)
         {
             try {
