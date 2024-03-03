@@ -9,8 +9,8 @@ using WishListApi.Services;
 var builder = WebApplication.CreateBuilder(args);
 var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
 var connectionString = configuration.GetValue<string>("ConnectionStrings:Default");
-// Add services to the container.
 
+// Add services to the container.
 builder.Services.AddAuthentication(opt => {
     opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;

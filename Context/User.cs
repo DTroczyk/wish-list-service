@@ -23,7 +23,13 @@ public partial class User
 
     public int? AvatarImage { get; set; }
 
+    public virtual File? AvatarImageNavigation { get; set; }
+
     public virtual ICollection<Friend> FriendUserId1Navigations { get; } = new List<Friend>();
 
     public virtual ICollection<Friend> FriendUserId2Navigations { get; } = new List<Friend>();
+
+    public virtual ICollection<WishContribute> WishContributes { get; } = new List<WishContribute>();
+
+    public virtual ICollection<Wish> Wishes { get; } = new List<Wish>();
 }

@@ -8,6 +8,6 @@ namespace WishListApi.Services
 {
     public interface IWishService
     {
-        public IEnumerable<Wish> GetOwnWishes();
+        // public IEnumerable<Wish> GetOwnWishes();
     }
 }

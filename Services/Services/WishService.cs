@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using WishListApi.Context;
 using WishListApi.Models;
 
 namespace WishListApi.Services
@@ -13,9 +14,9 @@ namespace WishListApi.Services
         {
         }
 
-        public IEnumerable<Wish> GetOwnWishes()
-        {
-            throw new NotImplementedException();
-        }
+        // public IEnumerable<Wish> GetOwnWishes()
+        // {
+        //     throw new NotImplementedException();
+        // }
     }
 }

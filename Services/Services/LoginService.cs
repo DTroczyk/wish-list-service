@@ -26,9 +26,9 @@ namespace WishListApi.Services
                 issuer: Configuration.ConfigurationManager.AppSetting["JWT:ValidIssuer"], 
                 audience: Configuration.ConfigurationManager.AppSetting["JWT:ValidAudience"], 
                 claims: new List<Claim>() {
-                    new Claim(JwtRegisteredClaimNames.Sub, user.Login),
-                    new Claim("firstName", user.FirstName),
-                    new Claim("lastName", user.LastName),
+                    new(JwtRegisteredClaimNames.Sub, user.Login),
+                    new("firstName", user.FirstName),
+                    new("lastName", user.LastName),
                 }, 
                 expires: DateTime.Now.AddMinutes(10), 
                 signingCredentials: signingCredentials);
@@ -49,7 +49,7 @@ namespace WishListApi.Services
         public List<ErrorModel> ValidateRegisterFields(RegisterDto registerDto) {
             List<ErrorModel> errors = new List<ErrorModel>();
 
-            Regex loginRegex = new Regex(@"^[A-z0-9](?:[A-z0-9]|[-_](?=[A-z0-9])){0,50}$");
+            Regex loginRegex = new(@"^[A-z0-9](?:[A-z0-9]|[-_](?=[A-z0-9])){0,50}$");
             if (registerDto.Login.Length < 3) {
                 errors.Add(new ErrorModel() {FieldName = "Login", Message = "Login must be longer than 3 characters.", Code = "LoginTooShort"});
             }
@@ -59,7 +59,7 @@ namespace WishListApi.Services
                 errors.Add(new ErrorModel() {FieldName = "Login", Message = "The login has invalid characters. Allowed characters are letters (A-z), numbers (0-9) and the characters '-' and '_'.", Code = "LoginInvalid"});
             }
 
-            Regex emailRegex = new Regex(@"^[a-z0-9]+(?:[-\._]?[a-z0-9]+)*@(?:[a-z0-9]+(?:-?[a-z0-9]+)*\.)+[a-z]+$");
+            Regex emailRegex = new(@"^[a-z0-9]+(?:[-\._]?[a-z0-9]+)*@(?:[a-z0-9]+(?:-?[a-z0-9]+)*\.)+[a-z]+$");
             if (!emailRegex.IsMatch(registerDto.Email)) {
                 errors.Add(new ErrorModel() {FieldName = "Email", Message = "Invalid email address format.", Code = "EmailInvalid"});
             }
@@ -67,7 +67,7 @@ namespace WishListApi.Services
                 errors.Add(new ErrorModel() {FieldName = "Email", Message = "Email must be shorter than 50 characters.", Code = "EmailTooLong"});
             }
 
-            Regex nameRegex = new Regex(@"^[a-zA-Zà-ÿÀ-Ÿ\-]*$");
+            Regex nameRegex = new(@"^[a-zA-Zà-ÿÀ-Ÿ\-]*$");
             if (!nameRegex.IsMatch(registerDto.FirstName)) {
                 errors.Add(new ErrorModel() {FieldName = "FirstName", Message = "Invalid first name format.", Code = "FirstNameInvalid"});
             }
@@ -87,7 +87,7 @@ namespace WishListApi.Services
                 errors.Add(new ErrorModel() {FieldName = "LastName", Message = "Last name must be shorter than 50 characters.", Code = "LastNameTooLong"});
             }
 
-            Regex passwordRegex = new Regex(@"^((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,64})$");
+            Regex passwordRegex = new(@"^((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,64})$");
             if (registerDto.Password.Length > 64) {
                 errors.Add(new ErrorModel() {FieldName = "Password", Message = "Password must be shorter than 64 signs.", Code = "PasswordTooLong"});
             } else if (!passwordRegex.IsMatch(registerDto.Password)) {
