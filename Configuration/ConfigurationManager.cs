@@ -2,10 +2,12 @@ namespace WishListApi.Configuration
 {
     public class ConfigurationManager
     {
-        public static IConfiguration AppSetting {
+        public static IConfiguration AppSetting
+        {
             get;
         }
-        static ConfigurationManager() {
+        static ConfigurationManager()
+        {
             AppSetting = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
         }
     }

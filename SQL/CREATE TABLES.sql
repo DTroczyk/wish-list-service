@@ -27,14 +27,20 @@ CREATE TABLE [Friend] (
 )
 
 CREATE TABLE [VisibilityStatus] (
-	Id int IDENTITY(1,1) PRIMARY KEY,
+	Id int PRIMARY KEY,
 	Status varchar(30) NOT NULL UNIQUE
 )
 
+INSERT INTO [VisibilityStatus] ([Id], [Status])
+	VALUES (0, 'ForFriends'), (1, 'Private'), (2, 'Public')
+
 CREATE TABLE [wishlist].[WishStatus] (
-	Id int IDENTITY(1,1) PRIMARY KEY,
+	Id int PRIMARY KEY,
 	Status varchar(30) NOT NULL UNIQUE
 )
+
+INSERT INTO [wishlist].[WishStatus] ([Id], [Status])
+	VALUES (0, 'Open'), (1, 'InProgress'), (2, 'Filled'), (3, 'Done'), (4, 'Rejected')
 
 CREATE TABLE [wishlist].[Wish] (
 	WishId bigint IDENTITY(1,1) PRIMARY KEY,
@@ -47,8 +53,8 @@ CREATE TABLE [wishlist].[Wish] (
 	Deadline datetime,
 	Quantity int NOT NULL,
 	IsMaxOne bit NOT NULL,
-	Status int NOT NULL FOREIGN KEY REFERENCES [wishlist].[WishStatus](Id),
-	Visibility int NOT NULL FOREIGN KEY REFERENCES [VisibilityStatus](Id),
+	StatusId int NOT NULL FOREIGN KEY REFERENCES [wishlist].[WishStatus](Id),
+	VisibilityId int NOT NULL FOREIGN KEY REFERENCES [VisibilityStatus](Id),
 )
 
 CREATE TABLE [wishlist].[WishContribute] (

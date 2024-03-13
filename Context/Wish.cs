@@ -25,17 +25,17 @@ public partial class Wish
 
     public bool IsMaxOne { get; set; }
 
-    public int Status { get; set; }
+    public int StatusId { get; set; }
 
-    public int Visibility { get; set; }
+    public int VisibilityId { get; set; }
 
     public virtual File? ImageNavigation { get; set; }
 
-    public virtual WishStatus StatusNavigation { get; set; } = null!;
+    public virtual WishStatus Status { get; set; } = null!;
 
     public virtual User User { get; set; } = null!;
 
-    public virtual VisibilityStatus VisibilityNavigation { get; set; } = null!;
+    public virtual VisibilityStatus Visibility { get; set; } = null!;
 
     public virtual ICollection<WishContribute> WishContributes { get; } = new List<WishContribute>();
 }

@@ -11,13 +11,16 @@ var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").B
 var connectionString = configuration.GetValue<string>("ConnectionStrings:Default");
 
 // Add services to the container.
-builder.Services.AddAuthentication(opt => {
+builder.Services.AddAuthentication(opt =>
+{
     opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(opt => {
-    opt.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters {
+}).AddJwtBearer(opt =>
+{
+    opt.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+    {
         ValidateIssuer = true,
-        ValidateAudience  = true,
+        ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
         ValidIssuer = configuration.GetValue<string>("JWT:ValidIssuer"),
@@ -30,14 +33,16 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddDbContext<AppDbContext>(opt => { opt.UseSqlServer(connectionString); });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options => {
-    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
         Scheme = "Bearer",
-            BearerFormat = "JWT",
-            In = ParameterLocation.Header,
-            Name = "Authorization",
-            Description = "Bearer Authentication with JWT Token",
-            Type = SecuritySchemeType.Http
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Description = "Bearer Authentication with JWT Token",
+        Type = SecuritySchemeType.Http
     });
     options.AddSecurityRequirement(new OpenApiSecurityRequirement {
         {
@@ -55,7 +60,8 @@ builder.Services.AddSwaggerGen(options => {
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IWishService, WishService>();
 
-builder.Services.AddCors(options => options.AddPolicy("Allow all", policy => {
+builder.Services.AddCors(options => options.AddPolicy("Allow all", policy =>
+{
     policy.AllowAnyOrigin();
 }));
 

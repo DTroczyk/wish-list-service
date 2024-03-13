@@ -11,7 +11,8 @@ namespace WishListApi.WebAPI.User
     {
         private readonly ILoginService _loginService;
 
-        public UserController(ILoginService loginService) {
+        public UserController(ILoginService loginService)
+        {
             _loginService = loginService;
         }
 
@@ -22,23 +23,28 @@ namespace WishListApi.WebAPI.User
         [ProducesResponseType(typeof(ErrorModel), 500)]
         public IActionResult Login([FromBody] LoginDto login)
         {
-            try {
+            try
+            {
                 var token = _loginService.Login(login);
-                if (token == null) {
-                    return Unauthorized(new ErrorModel(){Message = "Wrong login or password", Code = "WrongLoginData"});
-                } 
+                if (token == null)
+                {
+                    return Unauthorized(new ErrorModel() { Message = "Wrong login or password", Code = "WrongLoginData" });
+                }
 
-                if (!_loginService.IsUserActive(login.Login)) {
-                    return StatusCode(403, new ErrorModel(){Message = "Account is inactive", Code = "InactiveAccount"});
+                if (!_loginService.IsUserActive(login.Login))
+                {
+                    return StatusCode(403, new ErrorModel() { Message = "Account is inactive", Code = "InactiveAccount" });
                 }
 
                 return Ok(token);
-            } catch (Exception Error) {
+            }
+            catch (Exception Error)
+            {
                 Console.WriteLine(Error);
-                return StatusCode(500, new ErrorModel(){Message = "Internal server error", Code = "ServerError"});
+                return StatusCode(500, new ErrorModel() { Message = "Internal server error", Code = "ServerError" });
             }
         }
-        
+
         [HttpPost("register")]
         [ProducesResponseType(typeof(string), 201)]
         [ProducesResponseType(typeof(ErrorModel), 400)]
@@ -46,28 +52,34 @@ namespace WishListApi.WebAPI.User
         [ProducesResponseType(typeof(ErrorModel), 500)]
         public IActionResult Register([FromBody] RegisterDto registerDto)
         {
-            try {
-                if(_loginService.IsUserExist(registerDto.Login)) {
-                    return Conflict(new ErrorModel(){Message = "User already exists.", Code = "UserExists"});
+            try
+            {
+                if (_loginService.IsUserExist(registerDto.Login))
+                {
+                    return Conflict(new ErrorModel() { Message = "User already exists.", Code = "UserExists" });
                 }
 
-                if(_loginService.IsEmailExist(registerDto.Email)) {
-                    return Conflict(new ErrorModel(){Message = "Email already exists.", Code = "EmailExists"});
+                if (_loginService.IsEmailExist(registerDto.Email))
+                {
+                    return Conflict(new ErrorModel() { Message = "Email already exists.", Code = "EmailExists" });
                 }
 
                 var errors = _loginService.ValidateRegisterFields(registerDto);
-                if (errors.Count > 0) {
+                if (errors.Count > 0)
+                {
                     return BadRequest(errors);
                 }
 
                 var token = _loginService.Register(registerDto);
                 return Created("", token);
-            } catch (Exception Error) {
+            }
+            catch (Exception Error)
+            {
                 Console.WriteLine(Error);
-                return StatusCode(500, new ErrorModel(){Message = "Internal server error", Code = "ServerError"});
+                return StatusCode(500, new ErrorModel() { Message = "Internal server error", Code = "ServerError" });
             }
         }
 
-       
+
     }
 }

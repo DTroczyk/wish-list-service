@@ -106,12 +106,13 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<VisibilityStatus>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Visibili__3214EC07556E0425");
+            entity.HasKey(e => e.Id).HasName("PK__Visibili__3214EC07AA1B2B42");
 
             entity.ToTable("VisibilityStatus");
 
-            entity.HasIndex(e => e.Status, "UQ__Visibili__3A15923F92B05598").IsUnique();
+            entity.HasIndex(e => e.Status, "UQ__Visibili__3A15923FEAA018B4").IsUnique();
 
+            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.Status)
                 .HasMaxLength(30)
                 .IsUnicode(false);
@@ -119,7 +120,7 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<Wish>(entity =>
         {
-            entity.HasKey(e => e.WishId).HasName("PK__Wish__64BA62A1C611824F");
+            entity.HasKey(e => e.WishId).HasName("PK__Wish__64BA62A1A6C6FAC3");
 
             entity.ToTable("Wish", "wishlist");
 
@@ -135,27 +136,27 @@ public partial class AppDbContext : DbContext
 
             entity.HasOne(d => d.ImageNavigation).WithMany(p => p.Wishes)
                 .HasForeignKey(d => d.Image)
-                .HasConstraintName("FK__Wish__Image__6E01572D");
+                .HasConstraintName("FK__Wish__Image__0C85DE4D");
 
-            entity.HasOne(d => d.StatusNavigation).WithMany(p => p.Wishes)
-                .HasForeignKey(d => d.Status)
+            entity.HasOne(d => d.Status).WithMany(p => p.Wishes)
+                .HasForeignKey(d => d.StatusId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Wish__Status__6EF57B66");
+                .HasConstraintName("FK__Wish__Status__0D7A0286");
 
             entity.HasOne(d => d.User).WithMany(p => p.Wishes)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Wish__UserId__6D0D32F4");
+                .HasConstraintName("FK__Wish__UserId__0B91BA14");
 
-            entity.HasOne(d => d.VisibilityNavigation).WithMany(p => p.Wishes)
-                .HasForeignKey(d => d.Visibility)
+            entity.HasOne(d => d.Visibility).WithMany(p => p.Wishes)
+                .HasForeignKey(d => d.VisibilityId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Wish__Visibility__6FE99F9F");
+                .HasConstraintName("FK__Wish__Visibility__0E6E26BF");
         });
 
         modelBuilder.Entity<WishContribute>(entity =>
         {
-            entity.HasKey(e => e.WishContributeId).HasName("PK__WishCont__1403072AF13353FE");
+            entity.HasKey(e => e.WishContributeId).HasName("PK__WishCont__1403072AE29B9EF4");
 
             entity.ToTable("WishContribute", "wishlist");
 
@@ -164,22 +165,23 @@ public partial class AppDbContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.WishContributes)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__WishContr__UserI__73BA3083");
+                .HasConstraintName("FK__WishContr__UserI__123EB7A3");
 
             entity.HasOne(d => d.Wish).WithMany(p => p.WishContributes)
                 .HasForeignKey(d => d.WishId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__WishContr__WishI__72C60C4A");
+                .HasConstraintName("FK__WishContr__WishI__114A936A");
         });
 
         modelBuilder.Entity<WishStatus>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__WishStat__3214EC073FDD225B");
+            entity.HasKey(e => e.Id).HasName("PK__WishStat__3214EC072DC5A351");
 
             entity.ToTable("WishStatus", "wishlist");
 
-            entity.HasIndex(e => e.Status, "UQ__WishStat__3A15923FE6B92A3E").IsUnique();
+            entity.HasIndex(e => e.Status, "UQ__WishStat__3A15923FADF0C923").IsUnique();
 
+            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.Status)
                 .HasMaxLength(30)
                 .IsUnicode(false);
